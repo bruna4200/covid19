@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "COVID_19": {
+    "covid19": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "api/paciente",

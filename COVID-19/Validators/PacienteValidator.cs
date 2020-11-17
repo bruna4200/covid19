@@ -5,23 +5,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace covid19.Validators
+namespace covid19.Validations
 {
-    public class PacienteValidator : AbstractValidator<Paciente> {
-        public PacienteValidator() {
-            RuleFor(p => p.nome)
-                .NotEmpty().WithMessage("Nome obrigatório")
-                .NotNull().WithMessage("Nome obrigatório")
-                .MinimumLength(3).WithMessage("Nome no minimo de 3 caracteres")
-                .MaximumLength(50).WithMessage("Nome no maximo com 50 caracteres");
+	public class PacienteValidator : AbstractValidator<Paciente>
+	{
+		public PacienteValidator()
+		{
+			RuleFor(p => p.nome).MinimumLength(3).WithMessage("Nome deve conter no mínimo 3 caracteres")
+								 .MaximumLength(100).WithMessage("Nome deve conter no máximo 100 caracteres");
 
-			RuleFor(p => p.nome)
-				.NotEmpty().WithMessage("CPF obrigatório!")
-				.NotNull().WithMessage("CPF obrigatório!")
-				.Must(validaCPF).WithMessage("CPF inválido.");
-        }
 
-		public static bool validaCPF(string cpf)
+			RuleFor(p => p.cpf).NotEmpty().WithMessage("Cpf é obrigatório")
+							   .NotNull().WithMessage("Cpf é obrigatório")
+							   .Must(validaCpf).WithMessage("Cpf é inválido");
+		}
+
+		private bool validaCpf(string cpf)
 		{
 			int[] multiplicador1 = new int[9] { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
 			int[] multiplicador2 = new int[10] { 11, 10, 9, 8, 7, 6, 5, 4, 3, 2 };

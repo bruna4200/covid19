@@ -1,6 +1,6 @@
-﻿using COVID_19.Repositories;
+﻿using covid19.Context;
 using covid19.Models;
-using covid19.Validators;
+using covid19.Validations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,34 +8,42 @@ using System.Threading.Tasks;
 
 namespace covid19.Repositories
 {
-    public class PacienteRepository : IPacienteRepository
+    public class PacienteRepository : IPaciente
     {
-        private IList<Paciente> listaPaciente = new List<Paciente>();
+        private Covid19Context Covid19Context;
+
         public PacienteRepository()
         {
-            listaPaciente.Add(new Paciente() { id = 1, cidade = "Bruna" });
-            listaPaciente.Add(new Paciente() { id = 2, cidade = "Paulo" });
-            listaPaciente.Add(new Paciente() { id = 3, cidade = "Karla" });
-            listaPaciente.Add(new Paciente() { id = 4, cidade = "Jason" });
+            Covid19Context = new Covid19Context();
         }
-        public Paciente BuscarPacientePorId(int pid)
+        public IList<Paciente> BuscarPacienteCidade(string cidade)
         {
-            return listaPaciente.Where(x => x.id == pid).FirstOrDefault();
+            return (IList<Paciente>)Covid19Context.PACIENTES.Where(p => p.cidade == cidade);
         }
-
+        public Paciente BuscarPacienteCPF(string cpf)
+        {
+            return Covid19Context.PACIENTES.Where(p => p.cpf == cpf).FirstOrDefault();
+        }
+        public Paciente BuscarPorId(int id)
+        {
+            return Covid19Context.PACIENTES.Where(p => p.id == id).FirstOrDefault();
+        }
         public void InserirPaciente(Paciente paciente)
         {
             var validator = new PacienteValidator();
             var validRes = validator.Validate(paciente);
             if (validRes.IsValid)
-                listaPaciente.Add(paciente);
+            {
+                Covid19Context.PACIENTES.Add(paciente);
+            }
             else
                 throw new Exception(validRes.Errors.FirstOrDefault().ToString());
         }
-
         public IList<Paciente> ListarTodosPacientes()
         {
-            return listaPaciente;
+            return (IList<Paciente>)Covid19Context.PACIENTES;
         }
+
     }
+
 }
