@@ -10,20 +10,12 @@ namespace covid19.Repositories
 {
     public class LoginRepository : ILoginRepository
     {
-        private Covid19Context covid19context;
-        public LoginRepository()
-        {
-            covid19context = new Covid19Context();
-        }
         public Login GetLogin(Login login)
         {
-            var resultado = 
-            covid19context.LOGINS.Where(l => l.usuario == login.usuario && l.senha == login.senha).FirstOrDefault();
-
-            if (resultado != null)
+            if (login.usuario == "Bru" && login.senha == "00102030")
             {
-                login.id = resultado.id;
-                login.grupo = resultado.grupo;
+                login.id = 1;
+                login.grupo = "adm";
                 return login;
             }
             return null;

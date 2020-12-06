@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using covid19.Models;
 using covid19.Repositories;
+using covid19.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,44 +17,58 @@ namespace covid19.Controllers
     [ApiController]
     public class PacienteController : ControllerBase
     {
-        private readonly PacienteRepository paciente_repository;
-        public PacienteController() 
+        private readonly IPacienteService _pacienteService;
+
+        public PacienteController(
+            IPacienteService pacienteService
+        )
         {
-            paciente_repository = new PacienteRepository();
+            _pacienteService = pacienteService;
+        }
+        private readonly PacienteRepository pacienteRepository;
+
+        public PacienteController()
+        {
+           pacienteRepository = new PacienteRepository();
         }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok("Litagem dos pacientes cadastrados.");
+            var pacientes = _pacienteService.BuscarTodos();
+            return Ok(pacientes);
+
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            paciente_repository.BuscarPorId(id);
-            return Ok("Dados do paciente.");
+            var paciente = _pacienteService.BuscarPacienteUnico(id);
+            return Ok(paciente);
+
         }
 
         [HttpPost]
         public async Task<IActionResult> Post(Paciente paciente)
         {
-                paciente_repository.InserirPaciente(paciente);
-                return Ok("Paciente cadastrado com sucesso");
+            _pacienteService.Create(paciente);
+
+            return Ok("Dado cadastrado ");
         }
 
         [HttpPut]
         public async Task<IActionResult> Put(Paciente paciente)
         {
-            Paciente p = new Paciente();
+            _pacienteService.Update(paciente);
 
-            return Ok("Paciente atualizado.");
+            return Ok("Dado atualizado");
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            return Ok("Paciente deleteado.");
+            _pacienteService.Delete(id);
+            return Ok("Dado deletado");
         }
 
     }

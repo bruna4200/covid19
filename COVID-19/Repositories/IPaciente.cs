@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace covid19.Repositories
 {
-    public interface IPaciente
+    public interface IPacienteRepository
     {
-        public Paciente BuscarPorId(int id);
-        public IList<Paciente> BuscarPacienteCidade(string cidade);
-        public Paciente BuscarPacienteCPF(string cpf);
-        public void InserirPaciente(Paciente paciente);
-        public IList<Paciente> ListarTodosPacientes();
+        public Paciente buscaPorId(int id);
+        public IList<Paciente> buscaTodosPacientes();
+        public void novoPaciente(Paciente paciente);
     }
 }

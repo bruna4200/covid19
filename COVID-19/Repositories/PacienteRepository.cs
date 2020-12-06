@@ -1,6 +1,7 @@
 ﻿using covid19.Context;
 using covid19.Models;
 using covid19.Validations;
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,42 +9,50 @@ using System.Threading.Tasks;
 
 namespace covid19.Repositories
 {
-    public class PacienteRepository : IPaciente
+    public class PacienteRepository : IPacienteRepository
     {
-        private Covid19Context Covid19Context;
+        private IList<Paciente> pacientesLista;
 
         public PacienteRepository()
         {
-            Covid19Context = new Covid19Context();
+            pacientesLista = new List<Paciente>();
         }
-        public IList<Paciente> BuscarPacienteCidade(string cidade)
-        {
-            return (IList<Paciente>)Covid19Context.PACIENTES.Where(p => p.cidade == cidade);
-        }
-        public Paciente BuscarPacienteCPF(string cpf)
-        {
-            return Covid19Context.PACIENTES.Where(p => p.cpf == cpf).FirstOrDefault();
-        }
-        public Paciente BuscarPorId(int id)
-        {
-            return Covid19Context.PACIENTES.Where(p => p.id == id).FirstOrDefault();
-        }
-        public void InserirPaciente(Paciente paciente)
+
+        public void novoPaciente(Paciente paciente)
         {
             var validator = new PacienteValidator();
             var validRes = validator.Validate(paciente);
             if (validRes.IsValid)
             {
-                Covid19Context.PACIENTES.Add(paciente);
+                pacientesLista.Add(paciente);
             }
             else
                 throw new Exception(validRes.Errors.FirstOrDefault().ToString());
         }
-        public IList<Paciente> ListarTodosPacientes()
+
+        public void Delete(int id)
         {
-            return (IList<Paciente>)Covid19Context.PACIENTES;
+            var ent = buscaPorId(id);
+            pacientesLista.Remove(ent);
         }
 
+        IList<Paciente> IPacienteRepository.buscaTodosPacientes()
+        {
+            return pacientesLista;
+        }
+
+        public Paciente buscaPorId(int id)
+        {
+            return pacientesLista.FirstOrDefault(paciente => paciente.id == id);
+        }
+
+        public Paciente Update(Paciente ent)
+        {
+            var salvo = buscaPorId(ent.id);
+            pacientesLista.Remove(salvo);
+            pacientesLista.Add(ent);
+            return ent;
+        }
     }
 
 }
